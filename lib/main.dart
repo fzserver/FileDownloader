@@ -4,7 +4,7 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:async';
 import 'package:simple_permissions/simple_permissions.dart';
 import 'package:file_utils/file_utils.dart';
-import 'package:flutter/services.dart';
+import 'dart:math';
 
 void main() => runApp(Downloader());
 
@@ -36,6 +36,7 @@ class _FileDownloaderState extends State<FileDownloader> {
   var platformVersion = "Unknown";
   Permission permission1 = Permission.WriteExternalStorage;
   var _onPressed;
+  static final Random random = Random();
 
   @override
     void initState() {
@@ -54,10 +55,12 @@ class _FileDownloaderState extends State<FileDownloader> {
   if (checkPermission1 == true) {
     
     var dir = await getExternalStorageDirectory();
+    var dirloc = "${dir.path}/FileDownloader/";
+    var randid = random.nextInt(10000);
 
     try {
-      FileUtils.mkdir(["${dir.path}/FileDownloader/"]);
-      await dio.download(imgUrl, "${dir.path}/FileDownloader/1.jpg",
+      FileUtils.mkdir([dirloc]);
+      await dio.download(imgUrl, dirloc + randid.toString() + ".jpg",
         onProgress: (receivedBytes, totalBytes) {
           setState(() {
             downloading = true;
@@ -71,7 +74,7 @@ class _FileDownloaderState extends State<FileDownloader> {
     setState(() {
       downloading = false;
       progress = "Download Completed.";
-      path = "${dir.path}/FileDownloader/1.jpg";
+      path = dirloc + randid.toString() + ".jpg";
     });
   } else {
     setState(() {
